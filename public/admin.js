@@ -1,3 +1,50 @@
+// === Simple Admin Login Popup ===
+const loginModalHtml = `
+<div id="loginModal" style="
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);display:flex;align-items:center;
+  justify-content:center;z-index:9999;visibility:visible;">
+  <div style="background:#fff;padding:20px;border-radius:8px;width:300px;text-align:center;">
+    <h3>Admin Login</h3>
+    <input type="password" id="adminPassword" placeholder="Enter Password" style="width:100%;padding:8px;">
+    <button id="loginBtn" style="margin-top:10px;width:100%;">Login</button>
+    <p id="loginError" style="color:red;font-size:12px;display:none;">Invalid password</p>
+  </div>
+</div>`;
+document.body.insertAdjacentHTML('afterbegin', loginModalHtml);
+
+const loginModal = document.getElementById('loginModal');
+const loginBtn = document.getElementById('loginBtn');
+const adminPasswordInput = document.getElementById('adminPassword');
+const loginError = document.getElementById('loginError');
+
+loginBtn.addEventListener('click', async () => {
+  const password = adminPasswordInput.value.trim();
+  // Call a backend endpoint to verify password
+  const res = await fetch('/api/admin-login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password })
+  });
+  if (res.ok) {
+    loginModal.style.visibility = 'hidden';
+    sessionStorage.setItem('isAdmin', 'true'); // optional client-side flag
+  } else {
+    loginError.style.display = 'block';
+  }
+});
+
+// Block all admin actions unless logged in
+if (sessionStorage.getItem('isAdmin') !== 'true') {
+  document.addEventListener('click', e => {
+    if (loginModal.style.visibility === 'visible') e.preventDefault();
+  }, true);
+}
+
+// =======================================================================
+// Original admin.js code below (unchanged)
+// =======================================================================
+
 // admin.js — Admin dashboard: create assignment, add MCQs only (with correct answer), view users & export CSV
 
 // --- Create Assignment ---
