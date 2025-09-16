@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Take Test • Listening Test</title>
+  <link rel="stylesheet" href="userStyle.css"/>
+  <style>
+.audio-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.audio-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+#timerText {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  background: #fef9c3;
+  border: 1px solid #facc15;
+}
+
+#timerText.danger {
+  background: #fecaca;
+  border-color: #dc2626;
+  color: #7f1d1d;
+}    
+.audio-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: space-between;
+    }
+    .timer-badge {
+      display: none;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: #fef9c3;
+      border: 1px solid #facc15;
+    }
+    .timer-badge.danger {
+      background: #fecaca;
+      border-color: #dc2626;
+      color: #7f1d1d;
+    }
+  </style>
+</head>
+<body>
+  <header class="app-bar">
+    <h1 class="app-bar-title">Listening Test</h1>
+    <p class="app-bar-sub">Listen → Timer → Answer</p>
+  </header>
+
+  <main class="page">
+    <!-- Test -->
+    <section class="card" id="test-section" style="display:none;">
+      <div id="assignmentContainer"></div>
+      <div id="questionsContainer" style="margin-top:14px;"></div>
+      <div id="resultBox" class="card" style="display:none; margin-top:12px;"></div>
+    </section>
+  </main>
+
+  <div id="overlayMessage" class="overlay" style="display:none;">
+    <div class="overlay-content">
+      <h2 id="overlayText">Loading next assignment…</h2>
+    </div>
+  </div>
+
+  <div id="snackbar" class="snackbar"></div>
+  <script src="test.js" type="module"></script>
+</body>
+</html>
+
+
+

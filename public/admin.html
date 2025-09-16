@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin • Listening Skill Test</title>
+  <link rel="stylesheet" href="userStyle.css" />
+</head>
+<body>
+  <header class="app-bar">
+    <h1 class="app-bar-title">Admin Panel</h1>
+    <p class="app-bar-sub">Create assignments • Manage questions • View users</p>
+  </header>
+
+  <main class="page">
+    <!-- Create Assignment (same as before) -->
+    <section class="card">
+      <div class="card-head">
+        <div class="step">Assignments</div>
+        <h2>Create Assignment</h2>
+        <p class="muted">Audio is required.</p>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="assignmentName">Assignment Name <span class="req">*</span></label>
+          <input id="assignmentName" type="text" placeholder="e.g., Set 1 – Story" />
+        </div>
+        <div class="form-field">
+          <label for="audioUpload">Upload Audio <span class="req">*</span></label>
+          <input id="audioUpload" type="file" accept="audio/*" />
+        </div>
+      </div>
+      <div class="actions">
+        <button id="createAssignmentButton" class="btn btn-primary">Create Assignment</button>
+      </div>
+    </section>
+
+    <!-- Question Builder (same as your working version) -->
+    <section class="card">
+      <div class="card-head">
+        <div class="step">Questions</div>
+        <h2>Question Builder</h2>
+        <p class="muted">Attach questions to an assignment. MCQs are auto-scored; Text answers are stored.</p>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="qbAssignment">Choose Assignment <span class="req">*</span></label>
+          <select id="qbAssignment"></select>
+        </div>
+        <div class="form-field">
+          <label for="qbType">Question Type</label>
+          <select id="qbType">
+            <option value="mcq">MCQ (single correct)</option>
+            <option value="text">Short Text</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="qbText">Question Text <span class="req">*</span></label>
+        <input id="qbText" type="text" placeholder="e.g., What is the speaker’s main idea?" />
+      </div>
+      <div id="mcqBox" class="card" style="padding:12px;">
+        <div class="muted" style="margin-bottom:8px;">MCQ Choices (select one correct)</div>
+        <div id="choicesWrap"></div>
+        <div class="actions" style="margin-top:10px;">
+          <button id="addChoice" class="btn btn-ghost">+ Add Choice</button>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:12px;">
+        <button id="saveQuestion" class="btn btn-primary">Save Question</button>
+        <button id="refreshQuestions" class="btn btn-ghost">Refresh Questions</button>
+      </div>
+      <div id="questionList" style="margin-top:12px;"></div>
+    </section>
+
+    <!-- Users + Download CSV -->
+    <section class="card">
+      <div class="card-head">
+        <div class="step">Users</div>
+        <h2>Registered Tokens & Answers</h2>
+      </div>
+      <div class="actions" style="margin-bottom:8px;">
+        <button id="refreshUsers" class="btn btn-ghost">Refresh</button>
+        <button id="downloadCsv" class="btn btn-primary">Download CSV</button>
+      </div>
+      <div id="usersContainer"></div>
+    </section>
+  </main>
+
+  <div id="snackbar" class="snackbar"></div>
+  <script src="admin.js" type="module"></script>
+</body>
+</html>

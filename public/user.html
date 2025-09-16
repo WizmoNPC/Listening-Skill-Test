@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Registration • Listening Test</title>
+  <link rel="stylesheet" href="userStyle.css"/>
+</head>
+<body>
+  <header class="app-bar">
+    <h1 class="app-bar-title">Listening Skill Test</h1>
+    <p class="app-bar-sub">Step 1: Register → Step 2: Open test.html and paste the token</p>
+  </header>
+
+  <main class="page">
+    <section class="card centered" id="user-details-form">
+      <div class="card-head">
+        <div class="step">Step 1</div>
+        <h2>Student Registration</h2>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="userName">Full Name *</label>
+          <input type="text" id="userName" placeholder="e.g., Jaspreet Singh" required/>
+        </div>
+        <div class="form-field">
+          <label for="collegeName">College Name *</label>
+          <input type="text" id="collegeName" placeholder="e.g., XYZ Institute" required/>
+        </div>
+        <div class="form-field">
+          <label for="rollNo">Roll Number *</label>
+          <input type="text" id="rollNo" placeholder="e.g., 22CS017" required/>
+        </div>
+      </div>
+
+ <div class="actions btn-row">
+  <button class="btn btn-primary" id="startTestBtn">Generate Token</button>
+  <button class="btn btn-ghost" id="clearFormBtn">Clear</button>
+</div>
+
+
+      <div id="tokenBox" class="card centered" style="display:none; margin-top:14px;">
+        <div class="card-head"><h3>Your Token</h3></div>
+        <p style="font-size:1.25rem;"><code id="tokenText">—</code></p>
+        <p class="muted">Open <strong>test.html</strong> and paste this token to unlock the test.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="snackbar" class="snackbar"></div>
+  <script src="user.js" type="module"></script>
+</body>
+</html>

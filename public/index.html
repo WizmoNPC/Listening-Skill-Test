@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Info</title>
+  <link rel="stylesheet" href="loginStyle.css"/>
+  <style>
+    .disclaimer{background:#f7fff9;border:1px solid #b8f0c2;padding:16px;border-radius:10px}
+    .agree{display:flex;align-items:center;gap:10px;margin-top:12px}
+    .agree input[type="checkbox"]{width:18px;height:18px;accent-color:#7adf91;background:#eaffea;border:2px solid #7adf91}
+    .btn{padding:10px 16px;border-radius:10px;border:none;cursor:pointer}
+    .btn-primary{background:#1BC1E5;color:#fff}
+  </style>
+</head>
+<body>
+  <header class="app-bar">
+    <h1 class="app-bar-title">Listening Skill Test</h1>
+  </header>
+  <main class="container" style="max-width:720px">
+    <div class="disclaimer">
+      <h2 style="margin-top:0">Before You Begin</h2>
+     <ul>
+  <li>This is a <strong>Listening Skill Test</strong> to assess your ability to listen and respond.</li>
+  <li>You must provide your <strong>Name</strong>, <strong>Roll Number</strong>, and <strong>College Name</strong> in the form.</li>
+  <li>After submission, you will receive a <strong>unique, one-time Username and Password</strong>.</li>
+  <li>The credentials are valid for a single user only and cannot be reused.</li>
+  <li>Once logged in, you will get <strong>1 minute</strong> to complete each assignment.</li>
+  <li>Failure to submit within the given time will close the assignment automatically.</li>
+  <li>Please ensure your details are accurate before submission, as incorrect information may restrict access.</li>
+  <li>By proceeding, you confirm that you understand and agree to these conditions.</li>
+</ul>
+
+
+      <label class="agree">
+        <input id="agreeBox" type="checkbox"/>
+        <span>I understand and agree.</span>
+      </label>
+      <div style="margin-top:14px;">
+        <button id="continueBtn" class="btn btn-primary" disabled>Continue</button>
+      </div>
+    </div>
+  </main>
+  <script>
+    const agree = document.getElementById('agreeBox');
+    const btn = document.getElementById('continueBtn');
+    agree.addEventListener('change', ()=>{ btn.disabled = !agree.checked; });
+    btn.addEventListener('click', ()=>{ window.location.href = 'user.html'; });
+  </script>
+</body>
+</html>
