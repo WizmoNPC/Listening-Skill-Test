@@ -200,8 +200,11 @@ function collectAnswers() {
   return answers;
 }
 
+// ✅ updated logic to accumulate and show combined results
 async function autoSubmit(attempt) {
   const answers = collectAnswers();
+
+  // submit answers for this assignment
   const res = await fetch('/api/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -216,14 +219,18 @@ async function autoSubmit(attempt) {
 
   const data = await res.json();
 
-  if (data && data.total !== null && data.score !== null) {
+  // ✅ accumulate grand total and score
+  if (data && typeof data.total === 'number' && typeof data.score === 'number') {
     grandScore += data.score;
     grandTotal += data.total;
   }
 
+  // ✅ keep a record for review
   allAnswers.push({
     assignment: attempt.assignment_name,
-    answers
+    answers,
+    score: data.score,
+    total: data.total
   });
 
   toast("Time's up. Auto-submitted!");
@@ -238,20 +245,21 @@ async function autoSubmit(attempt) {
         loadAssignment(attempts[currentIndex]);
       }, 1200);
     } else {
+      // ✅ All done: show combined result
       assignmentContainer.innerHTML = "<h3>All assignments completed 🎉</h3>";
       questionsContainer.innerHTML = "";
 
       resultBox.style.display = 'block';
       resultBox.innerHTML = `
         <h3>Overall Result</h3>
-        <p>You scored <strong>${grandScore}</strong> out of <strong>${grandTotal}</strong></p>
+        <p>You scored <strong>${grandScore}</strong> out of <strong>${grandTotal}</strong> total questions across all sets</p>
         <div style="display:flex;justify-content:center;margin-top:10px;">
           ${renderMeter(grandScore, grandTotal)}
         </div>
         <h4 style="margin-top:16px;">Your Answers</h4>
         <ul>
           ${allAnswers.map(a => 
-            `<li><strong>${a.assignment}</strong> — ${a.answers.length} answers</li>`
+            `<li><strong>${a.assignment}</strong>: ${a.score}/${a.total} correct</li>`
           ).join('')}
         </ul>
       `;
