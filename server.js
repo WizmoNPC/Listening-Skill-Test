@@ -16,12 +16,8 @@ app.use(express.static('public'));
 // 🔹🔹🔹 Admin login route added here 🔹🔹🔹
 app.post('/api/admin-login', (req, res) => {
   const { password } = req.body;
-
-  // ✅ Replace this with your own password or env var
   const correctPassword = process.env.ADMIN_PASSWORD || 'Shabu@911';
-
   if (password === correctPassword) {
-    // Optionally set a cookie: res.cookie('isAdmin','true',{httpOnly:true});
     res.sendStatus(200);
   } else {
     res.sendStatus(401);
@@ -106,7 +102,7 @@ app.get('/api/assignments', (_req, res) => {
   });
 });
 
-// ---------- Registration (no token) ----------
+// ---------- Registration ----------
 app.post('/api/register', (req, res) => {
   const { name, roll, college } = req.body || {};
   if (!name || !roll || !college) return res.status(400).json({ error: 'Missing fields.' });
@@ -135,7 +131,7 @@ app.post('/api/register', (req, res) => {
   );
 });
 
-// ---------- Audio stream (one-time only) ----------
+// ---------- Audio stream ----------
 app.get('/api/stream/:assignmentId', (req, res) => {
   const assignmentId = parseInt(req.params.assignmentId, 10);
   const { name, roll, college } = req.query;
@@ -148,12 +144,9 @@ app.get('/api/stream/:assignmentId', (req, res) => {
       if (err) return res.status(500).send('Database error');
       if (!attempt) return res.status(403).send('Not registered');
 
-      // 🔹 If already used, allow only range continuation requests, block new playbacks
       if (attempt.used && !req.headers.range) {
         return res.status(403).send('Audio already played once.');
       }
-
-      // 🔹 Mark as used only on the very first request
       if (!attempt.used) {
         db.run('UPDATE attempts SET used=1 WHERE id=?', [attempt.id]);
       }
@@ -189,19 +182,17 @@ app.get('/api/stream/:assignmentId', (req, res) => {
   );
 });
 
-// ---------- Questions (MCQ only) ----------
+// ---------- Questions ----------
 app.post('/api/question', (req, res) => {
   const { assignmentId, qtype, text, choices } = req.body || {};
   if (!assignmentId || !text) return res.status(400).json({ error: 'Missing fields.' });
   if (qtype !== 'mcq') return res.status(400).json({ error: 'Only MCQ questions are supported.' });
 
-  // sanitize/validate choices
   const sanitized = Array.isArray(choices)
     ? choices
         .map(c => ({ label: String(c.label || '').trim(), is_correct: c.is_correct ? 1 : 0 }))
         .filter(c => c.label.length > 0)
     : [];
-
   if (sanitized.length < 2) {
     return res.status(400).json({ error: 'MCQ needs at least two choices.' });
   }
@@ -223,7 +214,6 @@ app.post('/api/question', (req, res) => {
   );
 });
 
-// list questions (MCQ only)
 app.get('/api/questions', (req, res) => {
   const assignmentId = parseInt(req.query.assignmentId, 10);
   if (!assignmentId) return res.status(400).json({ error: 'assignmentId required' });
@@ -249,7 +239,6 @@ app.get('/api/questions', (req, res) => {
   );
 });
 
-// delete question (and its choices)
 app.delete('/api/question/:id', (req, res) => {
   const qid = parseInt(req.params.id, 10);
   if (!qid) return res.status(400).json({ error: 'Invalid id' });
@@ -261,7 +250,7 @@ app.delete('/api/question/:id', (req, res) => {
   });
 });
 
-// ---------- Submit answers (MCQ only scoring) ----------
+// ---------- Submit answers ----------
 app.post('/api/submit', (req, res) => {
   const { assignmentId, name, roll, college, answers } = req.body || {};
   if (!assignmentId || !name || !roll || !college || !Array.isArray(answers)) {
@@ -351,12 +340,16 @@ app.get('/api/answers', (req, res) => {
   );
 });
 
-// ---------- CSV Export ----------
+// ---------- CSV Export with Correct/Incorrect column ----------
 app.get('/api/export.csv', (_req, res) => {
   db.all(
     `SELECT t.name, t.roll, t.college,
-            a.name AS assignment_name, q.text AS question_text, q.qtype,
-            s.answer_text, c.label AS choice_label
+            a.name AS assignment_name, 
+            q.text AS question_text, 
+            q.qtype,
+            s.answer_text, 
+            s.is_correct,                -- ✅ add is_correct from submissions
+            c.label AS choice_label
      FROM submissions s
      JOIN attempts t ON t.id = s.attempt_id
      JOIN assignments a ON a.id = t.assignment_id
@@ -366,12 +359,28 @@ app.get('/api/export.csv', (_req, res) => {
     [],
     (err, rows) => {
       if (err) return res.status(500).send('Export failed');
-      const header = 'Name,Roll,College,Assignment,Question,Answer\n';
+
+      // ✅ Added Correct column to the header
+      const header = 'Name,Roll,College,Assignment,Question,Answer,Correct\n';
       const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+
       const body = (rows || []).map(r => {
+        // choose the label for MCQ or raw answer_text
         const ans = r.qtype === 'mcq' && r.choice_label ? r.choice_label : r.answer_text;
-        return [esc(r.name), esc(r.roll), esc(r.college), esc(r.assignment_name), esc(r.question_text), esc(ans)].join(',');
+        // ✅ Yes/No for correct answers
+        const correct = r.is_correct === 1 ? 'Yes' : 'No';
+
+        return [
+          esc(r.name),
+          esc(r.roll),
+          esc(r.college),
+          esc(r.assignment_name),
+          esc(r.question_text),
+          esc(ans),
+          esc(correct)
+        ].join(',');
       }).join('\n');
+
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', 'attachment; filename="export.csv"');
       res.send(header + body);
