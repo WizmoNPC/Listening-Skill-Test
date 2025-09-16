@@ -13,6 +13,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+// 🔹🔹🔹 Admin login route added here 🔹🔹🔹
+app.post('/api/admin-login', (req, res) => {
+  const { password } = req.body;
+
+  // ✅ Replace this with your own password or env var
+  const correctPassword = process.env.ADMIN_PASSWORD || 'Shabu@911';
+
+  if (password === correctPassword) {
+    // Optionally set a cookie: res.cookie('isAdmin','true',{httpOnly:true});
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(401);
+  }
+});
+// 🔹🔹🔹 End admin login route 🔹🔹🔹
+
 // --- Database ---
 const db = new sqlite3.Database('./data.db');
 
@@ -172,6 +188,7 @@ app.get('/api/stream/:assignmentId', (req, res) => {
     }
   );
 });
+
 // ---------- Questions (MCQ only) ----------
 app.post('/api/question', (req, res) => {
   const { assignmentId, qtype, text, choices } = req.body || {};
