@@ -19,7 +19,7 @@ const adminPasswordInput = document.getElementById('adminPassword');
 const loginError = document.getElementById('loginError');
 
 loginBtn.addEventListener('click', async () => {
-  const password = adminPasswordInput.value.trim();
+  const password = adminPasswordInput.value.trim("Shabu@911");
   // Call a backend endpoint to verify password
   const res = await fetch('/api/admin-login', {
     method: 'POST',
