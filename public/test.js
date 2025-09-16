@@ -82,7 +82,7 @@ function loadAssignment(attempt) {
   title.className = 'audio-title';
   title.style.fontSize = "18px";
   title.style.fontWeight = "600";
-  title.style.display = "none"; 
+  title.style.display = "block"; 
   title.innerHTML = `Time Left: <span id="timerText">01:00</span>`;
 
   // Audio player
@@ -122,13 +122,11 @@ function loadAssignment(attempt) {
     }
   });
 
+  // when audio ends, just mark it played and disable controls
   audio.addEventListener('ended', () => {
     alreadyPlayed = true;
     audio.controls = false; // hide controls after playing
     audio.pause();
-    title.style.display = "block";
-    startTimer(document.getElementById("timerText"), attempt);
-    loadQuestions(attempt.assignment_id);
   });
 
   audioWrapper.appendChild(title);
@@ -137,10 +135,14 @@ function loadAssignment(attempt) {
 
   const info = document.createElement('p');
   info.style.textAlign = 'center';
-  info.textContent = 'Listen carefully. Questions will appear after the audio ends.';
+  info.textContent = 'Listen carefully and answer the questions below.';
   container.appendChild(info);
 
   assignmentContainer.appendChild(container);
+
+  // ✅ start timer and load questions immediately (audio + questions at same time)
+  startTimer(document.getElementById("timerText"), attempt);
+  loadQuestions(attempt.assignment_id);
 }
 
 async function loadQuestions(assignmentId) {
